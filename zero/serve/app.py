@@ -44,9 +44,14 @@ class GrpcApp:
 
 class Serve:
 
-    def __init__(self, address: str = 'localhost:8080', max_workers: int = 10, run_timeout: Optional[int] = None):
+    def __init__(self,
+                 address: str = 'localhost:8080',
+                 max_workers: int = 10,
+                 run_timeout: Optional[int] = None,
+                 debug: bool = True):
         self.address = address
         self.run_timeout = run_timeout
+        self.debug = debug
         app = GrpcApp(max_workers)
         current.app = app
         self.app = current.app
@@ -55,6 +60,7 @@ class Serve:
         self._create_and_register_pb2_class()
         self.app.server.add_insecure_port(self.address)
         self.app.server.start()
+        self.output_start_message()
         self.app.server.wait_for_termination(self.run_timeout)
 
     def add_pb2(self, pb2, alias: str):
@@ -77,3 +83,8 @@ class Serve:
                 continue
             instance = type(alias, (pb2.servicer,), funcs)
             pb2.add_to_server(instance(), self.app.server)
+
+    def output_start_message(self):
+        if self.debug:
+            warnings.warn('The current debug is True.')
+            print(f'[ZERO-DEBUG] listening on grpc://{self.address}')
