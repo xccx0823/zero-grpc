@@ -51,14 +51,20 @@ class Serve:
     def __init__(self, address: str = 'localhost:8080', max_workers: int = 10, run_timeout: Optional[int] = None):
         self.address = address
         self.run_timeout = run_timeout
+        self.max_workers = max_workers
         app = GrpcApp(max_workers)
         current.app = app
         self.app = current.app
 
-    def run(self, *, address: Optional[str] = None, timeout: Optional[int] = None):
+    def run(self, *, address: Optional[str] = None, timeout: Optional[int] = None, debug: bool = True):
+        address = address or self.address
         self._create_and_register_pb2_class()
-        self.app.server.add_insecure_port(address or self.address)
+        self.app.server.add_insecure_port(address)
         self.app.server.start()
+
+        # output start message
+        self.output_start_message(address, debug)
+
         self.app.server.wait_for_termination(timeout or self.run_timeout)
 
     def add_pb2(self, pb2, pb2_grpc, alias: str):
@@ -81,3 +87,13 @@ class Serve:
                 continue
             instance = type(alias, (pb2.servicer, pb2.tool_cls()), funcs)
             pb2.add_to_server(instance(), self.app.server)
+
+    def output_start_message(self, address, debug):
+        if debug:
+            link = f'grpc://{address}'
+            print(f"\033[96m[ZERO-DEBUG] listening on {link}\033[0m")
+            print(f"\033[96m[ZERO-DEBUG] worker {self.max_workers}\033[0m\n")
+            for pb2_name, funcions in self.app.alias_func_mappper.items():
+                print(f"\033[96m[ZERO-DEBUG] {pb2_name}\033[0m")
+                for function in funcions.keys():
+                    print(f"\033[96m[ZERO-DEBUG] --> {function}\033[0m")
