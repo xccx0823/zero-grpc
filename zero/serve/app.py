@@ -39,7 +39,7 @@ class GrpcApp:
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
         self.setting = Setting()
         self.pb2_mapper: dict = {}
-        self.alias_func_mappper: dict = {}
+        self.alias_func_mapper: dict = {}
 
 
 class Serve:
@@ -62,15 +62,15 @@ class Serve:
 
     def route(self, alias, name):
         def decorator(f):
-            self.app.alias_func_mappper.setdefault(alias, {}).update({name: f})
+            self.app.alias_func_mapper.setdefault(alias, {}).update({name: f})
             return f
 
         return decorator
 
     def _create_and_register_pb2_class(self):
-        if not self.app.alias_func_mappper:
+        if not self.app.alias_func_mapper:
             return
-        for alias, funcs in self.app.alias_func_mappper.items():
+        for alias, funcs in self.app.alias_func_mapper.items():
             pb2: _PB2 = self.app.pb2_mapper.get(alias)
             if not pb2:
                 warnings.warn(f"No pb2 object alias {alias} was added.")
