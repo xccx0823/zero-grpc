@@ -1,3 +1,4 @@
+import warnings
 from concurrent import futures
 from typing import Optional
 
@@ -38,6 +39,7 @@ class GrpcApp:
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
         self.setting = Setting()
         self.pb2_mapper: dict = {}
+        self.alias_func_mappper = {}
 
 
 class Serve:
@@ -50,9 +52,28 @@ class Serve:
         self.app = current.app
 
     def run(self, *, address: Optional[str] = None, timeout: Optional[int] = None):
+        self._create_and_register_pb2_class()
         self.app.server.add_insecure_port(address or self.address)
         self.app.server.start()
         self.app.server.wait_for_termination(timeout or self.run_timeout)
 
     def add_pb2(self, pb2, alias: str):
         self.app.pb2_mapper[alias] = _PB2(pb2)
+
+    def route(self, alias, name):
+        def decorator(f):
+            self.app.alias_func_mappper.setdefault(alias, {}).update({name: f})
+            return f
+
+        return decorator
+
+    def _create_and_register_pb2_class(self):
+        if not self.app.alias_func_mappper:
+            return
+        for alias, funcs in self.app.alias_func_mappper.items():
+            pb2: _PB2 = self.app.pb2_mapper.get(alias)
+            if not pb2:
+                warnings.warn(f"No pb2 object alias {alias} was added.")
+                continue
+            instance = type(alias, (pb2.servicer,), funcs)
+            pb2.add_to_server(instance(), self.app.server)
