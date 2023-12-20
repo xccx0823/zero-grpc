@@ -39,7 +39,7 @@ class GrpcApp:
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
         self.setting = Setting()
         self.pb2_mapper: dict = {}
-        self.alias_func_mappper = {}
+        self.alias_func_mappper: dict = {}
 
 
 class Serve:
