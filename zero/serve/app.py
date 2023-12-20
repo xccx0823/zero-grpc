@@ -51,11 +51,11 @@ class Serve:
         current.app = app
         self.app = current.app
 
-    def run(self, *, address: Optional[str] = None, timeout: Optional[int] = None):
+    def run(self):
         self._create_and_register_pb2_class()
-        self.app.server.add_insecure_port(address or self.address)
+        self.app.server.add_insecure_port(self.address)
         self.app.server.start()
-        self.app.server.wait_for_termination(timeout or self.run_timeout)
+        self.app.server.wait_for_termination(self.run_timeout)
 
     def add_pb2(self, pb2, alias: str):
         self.app.pb2_mapper[alias] = _PB2(pb2)
