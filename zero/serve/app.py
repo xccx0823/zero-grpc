@@ -35,8 +35,8 @@ class _PB2:
 
 class GrpcApp:
 
-    def __init__(self, max_workers: int = 10):
-        self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
+    def __init__(self, workers: int):
+        self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=workers))
         self.setting = Setting()
         self.pb2_mapper: dict = {}
         self.alias_func_mapper: dict = {}
@@ -46,13 +46,14 @@ class Serve:
 
     def __init__(self,
                  address: str = 'localhost:8080',
-                 max_workers: int = 10,
+                 workers: int = 10,
                  run_timeout: Optional[int] = None,
                  debug: bool = True):
         self.address = address
         self.run_timeout = run_timeout
         self.debug = debug
-        app = GrpcApp(max_workers)
+        self.workers = workers
+        app = GrpcApp(self.workers)
         current.app = app
         self.app = current.app
 
@@ -88,3 +89,4 @@ class Serve:
         if self.debug:
             warnings.warn('The current debug is True.')
             print(f'[ZERO-DEBUG] listening on grpc://{self.address}')
+            print(f'[ZERO-DEBUG] workers {self.workers}')
