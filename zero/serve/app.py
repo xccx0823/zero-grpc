@@ -1,3 +1,4 @@
+import inspect
 import logging
 import warnings
 from concurrent import futures
@@ -38,6 +39,9 @@ class _PB2:
     def tool_cls(self):
         return type('PB2', (object,), {'pb2': self.pb2})
 
+    def get_servicer_funcs(self):
+        return dict(inspect.getmembers(self.servicer, predicate=inspect.isfunction)).keys()
+
 
 class GrpcApp:
 
@@ -45,6 +49,7 @@ class GrpcApp:
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=workers))
         self.pb2_mapper: dict = {}
         self.alias_func_mapper: dict = {}
+        self.needed_func_mapper: dict = {}
 
 
 def create_logger() -> logging.Logger:
@@ -98,7 +103,9 @@ class Zero:
 
     def add_pb2(self, pb2, pb2_grpc, alias: str):
         """Add python code files generated with the grpc tool."""
-        self.app.pb2_mapper[alias] = _PB2(pb2, pb2_grpc)
+        instance = _PB2(pb2, pb2_grpc)
+        self.app.pb2_mapper[alias] = instance
+        self.app.needed_func_mapper[alias] = instance.get_servicer_funcs()
 
     def rpc(self, alias, name):
         """Function registration decorator for grpc's proto function."""
@@ -135,6 +142,9 @@ class Zero:
             self.log.debug(f"* The number of workers is {self.workers}\n")
             for pb2_name, functions in self.app.alias_func_mapper.items():
                 self.log.debug(f"* Proto alias: {pb2_name}")
-                for function in functions.keys():
-                    self.log.debug(f"* -----------> {function}")
+                for function in self.app.needed_func_mapper[pb2_name]:
+                    if function in functions.keys():
+                        self.log.debug(f"* -----------> {function} " + "\033[92m√\033[0m")
+                    else:
+                        self.log.debug(f"* -----------> {function} " + "\033[93m×\033[0m")
             self.log.debug('\n\033[93mPress CTRL+C to quit\033[0m')
