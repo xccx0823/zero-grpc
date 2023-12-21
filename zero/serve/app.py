@@ -7,6 +7,7 @@ from typing import Optional, Union
 import grpc  # noqa
 
 from zero.setting.main import Setting
+from zero.utils import camel_to_snake
 
 
 class current:  # noqa
@@ -118,8 +119,19 @@ class Zero:
 
     def server(self, alias):
 
-        def decorator(f):
-            return f
+        def decorator(c):
+            cls_funcs = dict(inspect.getmembers(c, predicate=inspect.isfunction))
+            if alias not in self.app.needed_func_mapper:
+                raise KeyError(f'PB2 object with alias `{alias}` not added.')
+            needed_funcs = self.app.needed_func_mapper[alias]
+            for needed_func in needed_funcs:
+                if needed_func in cls_funcs:
+                    f = cls_funcs[needed_func]
+                    self.app.alias_func_mapper.setdefault(alias, {}).update({needed_func: f})
+                elif camel_to_snake(needed_func) in cls_funcs:
+                    f = cls_funcs[camel_to_snake(needed_func)]
+                    self.app.alias_func_mapper.setdefault(alias, {}).update({needed_func: f})
+            return c
 
         return decorator
 
