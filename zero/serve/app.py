@@ -57,7 +57,7 @@ def create_logger() -> logging.Logger:
     return logger
 
 
-class Serve:
+class Zero:
     """grpc server"""
 
     def __init__(self, *,
@@ -100,11 +100,18 @@ class Serve:
         """Add python code files generated with the grpc tool."""
         self.app.pb2_mapper[alias] = _PB2(pb2, pb2_grpc)
 
-    def route(self, alias, name):
+    def rpc(self, alias, name):
         """Function registration decorator for grpc's proto function."""
 
         def decorator(f):
             self.app.alias_func_mappper.setdefault(alias, {}).update({name: f})
+            return f
+
+        return decorator
+
+    def server(self, alias):
+
+        def decorator(f):
             return f
 
         return decorator
