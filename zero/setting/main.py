@@ -17,11 +17,22 @@ class Setting:
 
     def yaml_config(self, path: str):
         """Load yaml file configuration."""
+        import yaml  # noqa
+        with open(path, 'r') as file:
+            config_dict = yaml.safe_load(file)
+        for config_key, config_value in config_dict.items():
+            self.__dict__[config_key.upper()] = config_value
 
-    def config(self, mapper: dict):
+    def config(self, config_dict: dict):
         """Load dictionary form configuration."""
-        for config_key, config_value in mapper.items():
+        for config_key, config_value in config_dict.items():
             self.__dict__[config_key.upper()] = config_value
 
     def ini_config(self, path: str):
         """Load ini file configuration."""
+        import configparser
+        config = configparser.ConfigParser()
+        config.read(path)
+        config_dict = {section: dict(config.items(section)) for section in config.sections()}
+        for config_key, config_value in config_dict.items():
+            self.__dict__[config_key.upper()] = config_value
