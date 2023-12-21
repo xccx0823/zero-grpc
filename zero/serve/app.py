@@ -125,8 +125,8 @@ class Zero:
                 elif snake_to_camel(func_name) in needed_funcs:
                     self.app.alias_func_mapper.setdefault(alias, {}).update({snake_to_camel(func_name): f})
                 else:
-                    raise KeyError(f'The current function service has been '
-                                   f'added to the proto service with alias `{alias}`')
+                    raise KeyError(f'Current function `{func_name}` Unable to be '
+                                   f'added to proto service with alias {alias}')
             return f
 
         return decorator
