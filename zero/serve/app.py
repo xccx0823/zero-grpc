@@ -44,7 +44,7 @@ class GrpcApp:
     def __init__(self, workers: int = 10):
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=workers))
         self.pb2_mapper: dict = {}
-        self.alias_func_mappper: dict = {}
+        self.alias_func_mapper: dict = {}
 
 
 def create_logger() -> logging.Logger:
@@ -104,7 +104,7 @@ class Zero:
         """Function registration decorator for grpc's proto function."""
 
         def decorator(f):
-            self.app.alias_func_mappper.setdefault(alias, {}).update({name: f})
+            self.app.alias_func_mapper.setdefault(alias, {}).update({name: f})
             return f
 
         return decorator
@@ -117,9 +117,9 @@ class Zero:
         return decorator
 
     def _create_and_register_pb2_class(self):
-        if not self.app.alias_func_mappper:
+        if not self.app.alias_func_mapper:
             return
-        for alias, funcs in self.app.alias_func_mappper.items():
+        for alias, funcs in self.app.alias_func_mapper.items():
             pb2: _PB2 = self.app.pb2_mapper.get(alias)
             if not pb2:
                 warnings.warn(f"No pb2 object alias {alias} was added.")
@@ -133,7 +133,7 @@ class Zero:
                              'environment.')
             self.log.debug(f"* Listening on grpc://{self.address}")
             self.log.debug(f"* The number of workers is {self.workers}\n")
-            for pb2_name, funcions in self.app.alias_func_mappper.items():
+            for pb2_name, funcions in self.app.alias_func_mapper.items():
                 self.log.debug(f"* Proto alias: {pb2_name}")
                 for function in funcions.keys():
                     self.log.debug(f"* -----------> {function}")
