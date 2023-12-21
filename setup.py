@@ -24,4 +24,9 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    entry_points={
+        'console_scripts': [
+            'zero-proto = zero.cmd.generate_proto:generate_grpc_code'
+        ]
+    }
 )
