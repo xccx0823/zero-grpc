@@ -76,8 +76,6 @@ class Serve:
             self.setting.ini_config(config)
         elif config and isinstance(config, str) and (config.endswith('.yaml') or config.endswith('.yml')):
             self.setting.yaml_config(config)
-        else:
-            raise ValueError('The config parameter must be dict or the yaml or ini file address.')
 
         # The configuration of the configuration file takes
         # precedence over the parameter configuration of the function.
