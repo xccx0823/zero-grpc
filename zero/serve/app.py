@@ -61,10 +61,7 @@ class Serve:
         self._create_and_register_pb2_class()
         self.app.server.add_insecure_port(address)
         self.app.server.start()
-
-        # output start message
         self.output_start_message(address, debug)
-
         self.app.server.wait_for_termination(timeout or self.run_timeout)
 
     def add_pb2(self, pb2, pb2_grpc, alias: str):
@@ -90,8 +87,8 @@ class Serve:
 
     def output_start_message(self, address, debug):
         if debug:
-            link = f'grpc://{address}'
-            print(f"\033[96m[ZERO-DEBUG] listening on {link}\033[0m")
+            warnings.warn('The current debug is True.')
+            print(f"\033[96m[ZERO-DEBUG] listening on grpc://{address}\033[0m")
             print(f"\033[96m[ZERO-DEBUG] worker {self.max_workers}\033[0m\n")
             for pb2_name, funcions in self.app.alias_func_mappper.items():
                 print(f"\033[96m[ZERO-DEBUG] {pb2_name}\033[0m")
