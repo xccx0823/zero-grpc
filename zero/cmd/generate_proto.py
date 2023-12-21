@@ -9,7 +9,7 @@ def generate_grpc_code(args):
         print(f"\n\033[91mwarning: you must be set --file, like {example_command}\033[0m")
         return
 
-    output = args.output or '.'
+    output = args.out or '.'
     command = [
         "python",
         "-m",
