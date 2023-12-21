@@ -105,7 +105,7 @@ class Serve:
             self.log.warning('WARNING: The current debug mode is true, please do not use it in production '
                              'environment.')
             self.log.debug(f"* Listening on grpc://{self.address}")
-            self.log.debug(f"* Worker {self.workers}\n")
+            self.log.debug(f"* The number of workers is {self.workers}\n")
             for pb2_name, funcions in self.app.alias_func_mappper.items():
                 self.log.debug(f"* Proto alias: {pb2_name}")
                 for function in funcions.keys():
