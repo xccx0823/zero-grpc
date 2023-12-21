@@ -48,6 +48,7 @@ class GrpcApp:
 
 
 def create_logger() -> logging.Logger:
+    """Provides a simple terminal log print object for use only in debug mode."""
     logger = logging.getLogger('zero-grpc')
     console_handler = logging.StreamHandler()
     logger.setLevel(logging.DEBUG)
@@ -57,6 +58,7 @@ def create_logger() -> logging.Logger:
 
 
 class Serve:
+    """grpc server"""
 
     def __init__(self, *,
                  address: str = 'localhost:8080',
@@ -64,8 +66,6 @@ class Serve:
                  run_timeout: Optional[int] = None,
                  debug: bool = True,
                  config: Union[str, dict, None] = None):
-
-        self.log = create_logger()
 
         # load configuration
         self.setting = Setting()
@@ -87,6 +87,8 @@ class Serve:
         self.app = GrpcApp(self.workers)
         current.app = self.app
 
+        self.log = create_logger()
+
     def run(self):
         self._create_and_register_pb2_class()
         self.app.server.add_insecure_port(self.address)
@@ -95,9 +97,12 @@ class Serve:
         self.app.server.wait_for_termination(self.run_timeout)
 
     def add_pb2(self, pb2, pb2_grpc, alias: str):
+        """Add python code files generated with the grpc tool."""
         self.app.pb2_mapper[alias] = _PB2(pb2, pb2_grpc)
 
     def route(self, alias, name):
+        """Function registration decorator for grpc's proto function."""
+
         def decorator(f):
             self.app.alias_func_mappper.setdefault(alias, {}).update({name: f})
             return f
