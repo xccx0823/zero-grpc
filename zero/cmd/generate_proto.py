@@ -1,8 +1,15 @@
 import subprocess
 
 
-def generate_grpc_code(file, output="."):
+def generate_grpc_code(args):
     """Generates grpc code from the specified proto file."""
+    file = args.file
+    if not file:
+        example_command = "\033[93mzero-grpc proto --file='example.proto'\033[0m"
+        print(f"\n\033[91mwarnning: you must be set --file, like {example_command}\033[0m")
+        return
+
+    output = args.output or '.'
     command = [
         "python",
         "-m",

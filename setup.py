@@ -26,7 +26,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'zero-proto = zero.cmd.generate_proto:generate_grpc_code'
+            'zero = zero.cmd.cli:main'
         ]
     }
 )
