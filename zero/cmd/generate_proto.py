@@ -6,7 +6,7 @@ def generate_grpc_code(args):
     file = args.file
     if not file:
         example_command = "\033[93mzero proto --file=example.proto\033[0m"
-        print(f"\n\033[91mwarnning: you must be set --file, like {example_command}\033[0m")
+        print(f"\n\033[91mwarning: you must be set --file, like {example_command}\033[0m")
         return
 
     output = args.output or '.'
@@ -19,4 +19,4 @@ def generate_grpc_code(args):
         f"--grpc_python_out={output}",
         file
     ]
-    subprocess.run(command, check=True)
+    subprocess.run(command)

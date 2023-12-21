@@ -133,8 +133,8 @@ class Zero:
                              'environment.')
             self.log.debug(f"* Listening on grpc://{self.address}")
             self.log.debug(f"* The number of workers is {self.workers}\n")
-            for pb2_name, funcions in self.app.alias_func_mapper.items():
+            for pb2_name, functions in self.app.alias_func_mapper.items():
                 self.log.debug(f"* Proto alias: {pb2_name}")
-                for function in funcions.keys():
+                for function in functions.keys():
                     self.log.debug(f"* -----------> {function}")
             self.log.debug('\n\033[93mPress CTRL+C to quit\033[0m')
