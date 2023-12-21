@@ -7,7 +7,7 @@ from typing import Optional, Union
 import grpc  # noqa
 
 from zero.setting.main import Setting
-from zero.utils import camel_to_snake
+from zero.utils import camel_to_snake, snake_to_camel
 
 
 class current:  # noqa
@@ -108,11 +108,25 @@ class Zero:
         self.app.pb2_mapper[alias] = instance
         self.app.needed_func_mapper[alias] = instance.get_servicer_funcs()
 
-    def rpc(self, alias, name):
+    def rpc(self, alias: str, name: Optional[str] = None):
         """Function registration decorator for grpc's proto function."""
 
         def decorator(f):
-            self.app.alias_func_mapper.setdefault(alias, {}).update({name: f})
+            if alias not in self.app.needed_func_mapper:
+                raise KeyError(f'PB2 object with alias `{alias}` not added.')
+
+            if name is not None:
+                self.app.alias_func_mapper.setdefault(alias, {}).update({name: f})
+            else:
+                func_name = f.__name__
+                needed_funcs = self.app.needed_func_mapper[alias]
+                if func_name in needed_funcs:
+                    self.app.alias_func_mapper.setdefault(alias, {}).update({func_name: f})
+                elif snake_to_camel(func_name) in needed_funcs:
+                    self.app.alias_func_mapper.setdefault(alias, {}).update({snake_to_camel(func_name): f})
+                else:
+                    raise KeyError(f'The current function service has been '
+                                   f'added to the proto service with alias `{alias}`')
             return f
 
         return decorator
