@@ -1,7 +1,7 @@
 import logging
 import warnings
 from concurrent import futures
-from typing import Optional
+from typing import Optional, Union
 
 import grpc  # noqa
 
@@ -11,6 +11,7 @@ from zero.setting.main import Setting
 class current:  # noqa
     """When a project uses a structured directory, use global objects that are easy to use within the project."""
     app: Optional['GrpcApp'] = None
+    setting: Optional['Setting'] = None
 
 
 class _PB2:
@@ -42,7 +43,6 @@ class GrpcApp:
 
     def __init__(self, workers: int = 10):
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=workers))
-        self.setting = Setting()
         self.pb2_mapper: dict = {}
         self.alias_func_mappper: dict = {}
 
@@ -58,19 +58,36 @@ def create_logger() -> logging.Logger:
 
 class Serve:
 
-    def __init__(self,
+    def __init__(self, *,
                  address: str = 'localhost:8080',
                  workers: int = 10,
                  run_timeout: Optional[int] = None,
-                 debug: bool = True):
-        self.address = address
-        self.run_timeout = run_timeout
-        self.workers = workers
-        self.debug = debug
-        app = GrpcApp(workers)
-        current.app = app
-        self.app = current.app
+                 debug: bool = True,
+                 config: Union[str, dict, None] = None):
+
         self.log = create_logger()
+
+        # load configuration
+        self.setting = Setting()
+        current.setting = self.setting
+        if config and isinstance(config, dict):
+            self.setting.config(config)
+        elif config and isinstance(config, str) and config.endswith('.ini'):
+            self.setting.ini_config(config)
+        elif config and isinstance(config, str) and (config.endswith('.yaml') or config.endswith('.yml')):
+            self.setting.yaml_config(config)
+        else:
+            raise ValueError('The config parameter must be dict or the yaml or ini file address.')
+
+        # The configuration of the configuration file takes
+        # precedence over the parameter configuration of the function.
+        self.address = address if self.setting.ADDRESS is None else self.setting.ADDRESS
+        self.run_timeout = run_timeout if self.setting.RUN_TIMEOUT is None else self.setting.RUN_TIMEOUT
+        self.workers = workers if self.setting.WORKERS is None else self.setting.WORKERS
+        self.debug = debug if self.setting.DEBUG is None else self.setting.DEBUG
+
+        self.app = GrpcApp(self.workers)
+        current.app = self.app
 
     def run(self):
         self._create_and_register_pb2_class()
