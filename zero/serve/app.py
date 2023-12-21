@@ -1,3 +1,4 @@
+import logging
 import warnings
 from concurrent import futures
 from typing import Optional
@@ -39,30 +40,44 @@ class _PB2:
 
 class GrpcApp:
 
-    def __init__(self, max_workers: int = 10):
-        self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
+    def __init__(self, workers: int = 10):
+        self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=workers))
         self.setting = Setting()
         self.pb2_mapper: dict = {}
         self.alias_func_mappper: dict = {}
 
 
+def create_logger() -> logging.Logger:
+    logger = logging.getLogger('zero-grpc')
+    console_handler = logging.StreamHandler()
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(console_handler)
+    logger.setLevel(logging.DEBUG)
+    return logger
+
+
 class Serve:
 
-    def __init__(self, address: str = 'localhost:8080', max_workers: int = 10, run_timeout: Optional[int] = None):
+    def __init__(self,
+                 address: str = 'localhost:8080',
+                 workers: int = 10,
+                 run_timeout: Optional[int] = None,
+                 debug: bool = True):
         self.address = address
         self.run_timeout = run_timeout
-        self.max_workers = max_workers
-        app = GrpcApp(max_workers)
+        self.workers = workers
+        self.debug = debug
+        app = GrpcApp(workers)
         current.app = app
         self.app = current.app
+        self.log = create_logger()
 
-    def run(self, *, address: Optional[str] = None, timeout: Optional[int] = None, debug: bool = True):
-        address = address or self.address
+    def run(self):
         self._create_and_register_pb2_class()
-        self.app.server.add_insecure_port(address)
+        self.app.server.add_insecure_port(self.address)
         self.app.server.start()
-        self.output_start_message(address, debug)
-        self.app.server.wait_for_termination(timeout or self.run_timeout)
+        self.output_start_message()
+        self.app.server.wait_for_termination(self.run_timeout)
 
     def add_pb2(self, pb2, pb2_grpc, alias: str):
         self.app.pb2_mapper[alias] = _PB2(pb2, pb2_grpc)
@@ -85,12 +100,14 @@ class Serve:
             instance = type(alias, (pb2.servicer, pb2.tool_cls()), funcs)
             pb2.add_to_server(instance(), self.app.server)
 
-    def output_start_message(self, address, debug):
-        if debug:
-            warnings.warn('The current debug is True.')
-            print(f"\033[96m[ZERO-DEBUG] listening on grpc://{address}\033[0m")
-            print(f"\033[96m[ZERO-DEBUG] worker {self.max_workers}\033[0m\n")
+    def output_start_message(self):
+        if self.debug:
+            self.log.warning('WARNING: The current debug mode is true, please do not use it in production '
+                             'environment.')
+            self.log.debug(f"* Listening on grpc://{self.address}")
+            self.log.debug(f"* Worker {self.workers}\n")
             for pb2_name, funcions in self.app.alias_func_mappper.items():
-                print(f"\033[96m[ZERO-DEBUG] {pb2_name}\033[0m")
+                self.log.debug(f"* Proto alias: {pb2_name}")
                 for function in funcions.keys():
-                    print(f"\033[96m[ZERO-DEBUG] --> {function}\033[0m")
+                    self.log.debug(f"* -----------> {function}")
+            self.log.debug('\n\033[93mPress CTRL+C to quit\033[0m')
