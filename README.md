@@ -35,10 +35,11 @@ message Response {
 python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. example.proto
 ```
 
-如果你觉得命令不太好记，也没有关系，`zero-grpc`
-提供了相关的命令，你只需要输入以下命令即可实现上面的命令的相同效果，但是需要注意的是不管是上述命令还是`zero-grpc`
-提供的命令都中proto
-文件都不可以是完整的地址，只能是相对地址。
+如果你觉得命令不太好记，也没有关系，`zero-grpc`提供了相关的命令，你只需要输入以下命令即可实现上面的命令的相同效果。
+
+注意的地方
+- 不管是上述命令还是`zero-grpc`提供的命令都中proto文件都不可以是完整的地址，只能是相对地址。
+- 如果你执行`zero-grpc`的命令行提示没有安装`grpc-tools`这个包，并不一定是你当前`venv`环境中没有安装，可能是你最外层的python环境中没有安装这个包，所以跳出当前的`venv`环境去最外层安装即可继续执行命令。
 
 ```shell
 zero proto2code --file=example.proto
