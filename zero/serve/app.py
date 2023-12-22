@@ -237,7 +237,7 @@ class Zero:
                         self.log.debug(f"* -----------> {function} " + "\033[92m√\033[0m")
                     else:
                         self.log.debug(f"* -----------> {function} " + "\033[93m×\033[0m")
-            self.log.debug('\n\033[93mPress CTRL+C to quit\033[0m')
+            self.log.debug('\n\033[93mPress CTRL+C to quit\033[0m\n')
 
     def set_logger_interceptor(self):
         """
