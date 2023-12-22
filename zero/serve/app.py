@@ -2,7 +2,7 @@ import inspect
 import logging
 import warnings
 from concurrent import futures
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
 import grpc  # noqa
 
@@ -163,11 +163,15 @@ class Zero:
 
         return decorator
 
-    def register_func(self, import_sting: str, *, alias: str, name: Optional[str] = None):
-        self.rpc(alias, name)(dynamic_import(import_sting))
+    def register_func(self, func: Union[Callable, str], *, alias: str, name: Optional[str] = None):
+        if isinstance(func, str):
+            func = dynamic_import(func)
+        self.rpc(alias, name)(func)
 
-    def register_view(self, import_sting: str, *, alias: str):
-        self.server(alias)(dynamic_import(import_sting))
+    def register_view(self, func: Union[Callable, str], *, alias: str):
+        if isinstance(func, str):
+            func = dynamic_import(func)
+        self.server(alias)(func)
 
     def _set_to_alias_func_mapper(self, alias: str, func_name: str, func):
         if alias not in self.app.alias_func_mapper:
