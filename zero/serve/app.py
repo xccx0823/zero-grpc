@@ -6,7 +6,7 @@ from typing import Optional, Union
 
 import grpc  # noqa
 
-from zero.setting.main import Setting
+from zero.serve.setting import Setting
 from zero.utils import camel_to_snake, snake_to_camel
 
 
