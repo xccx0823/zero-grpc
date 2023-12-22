@@ -5,6 +5,9 @@ from zero.cmd.generate_proto import generate_grpc_code
 
 
 def main():
+    """
+    zero-grpc command line tool.
+    """
     if len(sys.argv) == 1:
         sys.argv.append('--help')
 

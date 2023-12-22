@@ -7,5 +7,5 @@ def camel_to_snake(name):
 
 
 def snake_to_camel(string):
-    s = re.sub('_([a-zA-Z])', lambda m: (m.group(1).upper()), string.lower())
-    return s[0].upper() + s[1:]
+    parts = string.split('_')
+    return ''.join(part.capitalize() for part in parts)

@@ -11,7 +11,9 @@ from zero.utils import camel_to_snake, snake_to_camel
 
 
 class current:  # noqa
-    """When a project uses a structured directory, use global objects that are easy to use within the project."""
+    """
+    When a project uses a structured directory, use global objects that are easy to use within the project.
+    """
     app: Optional['GrpcApp'] = None
     setting: Optional['Setting'] = None
 
@@ -25,11 +27,11 @@ class _PB2:
         self.stub = None
         self.servicer = None
         for name in pb2_grpc.__dict__.keys():
-            if name.endswith('Stub'):
+            if self.stub is None and name.endswith('Stub'):
                 self.stub = pb2_grpc.__dict__[name]
-            if name.endswith('Servicer'):
+            if self.servicer is None and name.endswith('Servicer'):
                 self.servicer = pb2_grpc.__dict__[name]
-            if name.startswith('add_') and name.endswith('_to_server'):
+            if self.add_to_server is None and name.startswith('add_') and name.endswith('_to_server'):
                 self.add_to_server = pb2_grpc.__dict__[name]
 
         assert self.stub, "The pb2_grpc structure is abnormal. The *Stub class cannot be found."
@@ -54,7 +56,9 @@ class GrpcApp:
 
 
 def create_logger() -> logging.Logger:
-    """Provides a simple terminal log print object for use only in debug mode."""
+    """
+    Provides a simple terminal log print object for use only in debug mode.
+    """
     logger = logging.getLogger('zero-grpc')
     console_handler = logging.StreamHandler()
     logger.setLevel(logging.DEBUG)
@@ -64,14 +68,17 @@ def create_logger() -> logging.Logger:
 
 
 class Zero:
-    """grpc server"""
+    """
+    grpc server
+    """
 
-    def __init__(self, *,
-                 address: str = 'localhost:8080',
-                 workers: int = 10,
-                 run_timeout: Optional[int] = None,
-                 debug: bool = True,
-                 config: Union[str, dict, None] = None):
+    def __init__(
+            self, *,
+            address: str = 'localhost:8080',
+            workers: int = 10,
+            run_timeout: Optional[int] = None,
+            debug: bool = True,
+            config: Union[str, dict, None] = None):
 
         # load configuration
         self.setting = Setting()
@@ -99,31 +106,35 @@ class Zero:
         self._create_and_register_pb2_class()
         self.app.server.add_insecure_port(self.address)
         self.app.server.start()
-        self.output_start_message()
+        self._output_start_message()
         self.app.server.wait_for_termination(self.run_timeout)
 
     def add_pb2(self, pb2, pb2_grpc, alias: str):
-        """Add python code files generated with the grpc tool."""
+        """
+        Add python code files generated with the grpc tool.
+        """
         instance = _PB2(pb2, pb2_grpc)
         self.app.pb2_mapper[alias] = instance
         self.app.needed_func_mapper[alias] = instance.get_servicer_funcs()
 
     def rpc(self, alias: str, name: Optional[str] = None):
-        """Function registration decorator for grpc's proto function."""
+        """
+        Function registration decorator for grpc's proto function.
+        """
 
         def decorator(f):
             if alias not in self.app.needed_func_mapper:
                 raise KeyError(f'PB2 object with alias `{alias}` not added.')
 
             if name is not None:
-                self.app.alias_func_mapper.setdefault(alias, {}).update({name: f})
+                self._set_to_alias_func_mapper(alias, name, f)
             else:
                 func_name = f.__name__
                 needed_funcs = self.app.needed_func_mapper[alias]
                 if func_name in needed_funcs:
-                    self.app.alias_func_mapper.setdefault(alias, {}).update({func_name: f})
+                    self._set_to_alias_func_mapper(alias, func_name, f)
                 elif snake_to_camel(func_name) in needed_funcs:
-                    self.app.alias_func_mapper.setdefault(alias, {}).update({snake_to_camel(func_name): f})
+                    self._set_to_alias_func_mapper(alias, snake_to_camel(func_name), f)
                 else:
                     raise KeyError(f'Current function `{func_name}` Unable to be '
                                    f'added to proto service with alias {alias}')
@@ -132,24 +143,42 @@ class Zero:
         return decorator
 
     def server(self, alias):
+        """
+        Class registration decorator for prototype functions for grpc.
+        """
 
         def decorator(c):
             cls_funcs = dict(inspect.getmembers(c, predicate=inspect.isfunction))
             if alias not in self.app.needed_func_mapper:
                 raise KeyError(f'PB2 object with alias `{alias}` not added.')
             needed_funcs = self.app.needed_func_mapper[alias]
-            for needed_func in needed_funcs:
-                if needed_func in cls_funcs:
-                    f = cls_funcs[needed_func]
-                    self.app.alias_func_mapper.setdefault(alias, {}).update({needed_func: f})
-                elif camel_to_snake(needed_func) in cls_funcs:
-                    f = cls_funcs[camel_to_snake(needed_func)]
-                    self.app.alias_func_mapper.setdefault(alias, {}).update({needed_func: f})
+            for needed_func_name in needed_funcs:
+                if needed_func_name in cls_funcs:
+                    f = cls_funcs[needed_func_name]
+                    self._set_to_alias_func_mapper(alias, needed_func_name, f)
+                elif camel_to_snake(needed_func_name) in cls_funcs:
+                    f = cls_funcs[camel_to_snake(needed_func_name)]
+                    self._set_to_alias_func_mapper(alias, needed_func_name, f)
             return c
 
         return decorator
 
+    def _set_to_alias_func_mapper(self, alias, func_name, func):
+        if alias not in self.app.alias_func_mapper:
+            self.app.alias_func_mapper[alias] = {func_name: func}
+        else:
+            func_mapper = self.app.alias_func_mapper[alias]
+            # If you have already registered, the second registration will not take effect and there will be a warning.
+            if func_name in func_mapper and self.debug:
+                warn_msg = f'The function `{func_name}` required in proto alias `{alias}` has already been registered.'
+                warnings.warn(warn_msg)
+            else:
+                self.app.alias_func_mapper[alias].update({func_name: func})
+
     def _create_and_register_pb2_class(self):
+        """
+        Various registration methods eventually generate dynamic classes that conform to the proto file definition.
+        """
         if not self.app.alias_func_mapper:
             return
         for alias, funcs in self.app.alias_func_mapper.items():
@@ -160,7 +189,10 @@ class Zero:
             instance = type(alias, (pb2.servicer, pb2.tool_cls()), funcs)
             pb2.add_to_server(instance(), self.app.server)
 
-    def output_start_message(self):
+    def _output_start_message(self):
+        """
+        Terminal information in debug mode.
+        """
         if self.debug:
             self.log.warning('WARNING: The current debug mode is true, please do not use it in production '
                              'environment.')
