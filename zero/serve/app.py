@@ -55,11 +55,11 @@ class GrpcApp:
         self.needed_func_mapper: dict = {}
 
 
-def create_logger() -> logging.Logger:
+def create_logger(import_name) -> logging.Logger:
     """
     Provides a simple terminal log print object for use only in debug mode.
     """
-    logger = logging.getLogger('zero-grpc')
+    logger = logging.getLogger(import_name)
     console_handler = logging.StreamHandler()
     logger.setLevel(logging.DEBUG)
     logger.addHandler(console_handler)
@@ -73,12 +73,16 @@ class Zero:
     """
 
     def __init__(
-            self, *,
+            self,
+            import_name,
+            *,
             address: str = 'localhost:8080',
             workers: int = 10,
             run_timeout: Optional[int] = None,
             debug: bool = True,
             config: Union[str, dict, None] = None):
+
+        self.import_name = import_name
 
         # load configuration
         self.setting = Setting()
@@ -100,7 +104,7 @@ class Zero:
         self.app = GrpcApp(self.workers)
         current.app = self.app
 
-        self.log = create_logger()
+        self.log = create_logger(import_name)
 
     def run(self):
         self._create_and_register_pb2_class()
@@ -206,6 +210,7 @@ class Zero:
         if self.debug:
             self.log.warning('WARNING: The current debug mode is true, please do not use it in production '
                              'environment.')
+            self.log.debug(f"* Serving Zero grpc app '{self.import_name}'")
             self.log.debug(f"* Listening on grpc://{self.address}")
             self.log.debug(f"* The number of workers is {self.workers}\n")
             for pb2_name, functions in self.app.alias_func_mapper.items():
