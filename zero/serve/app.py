@@ -7,6 +7,7 @@ from typing import Optional, Union, Callable
 import grpc  # noqa
 from grpc._interceptor import service_pipeline  # noqa
 
+from zero.serve.interceptor import setup_logger_interceptor
 from zero.serve.setting import Setting
 from zero.utils import camel_to_snake, snake_to_camel, dynamic_import
 
@@ -109,6 +110,8 @@ class Zero:
         self.log = create_logger(import_name)
 
     def run(self):
+        if self.debug:
+            self.set_logger_interceptor()
         self._create_and_register_pb2_class()
         self.app.server.add_insecure_port(self.address)
         self.app.server.start()
@@ -235,3 +238,10 @@ class Zero:
                     else:
                         self.log.debug(f"* -----------> {function} " + "\033[93m×\033[0m")
             self.log.debug('\n\033[93mPress CTRL+C to quit\033[0m')
+
+    def set_logger_interceptor(self):
+        """
+        Set the log blocker.
+        """
+        logger_interceptor = setup_logger_interceptor(self)
+        self.use(logger_interceptor)
