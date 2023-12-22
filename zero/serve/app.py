@@ -5,6 +5,7 @@ from concurrent import futures
 from typing import Optional, Union, Callable
 
 import grpc  # noqa
+from grpc._interceptor import service_pipeline  # noqa
 
 from zero.serve.setting import Setting
 from zero.utils import camel_to_snake, snake_to_camel, dynamic_import
@@ -50,6 +51,7 @@ class GrpcApp:
 
     def __init__(self, workers: int = 10):
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=workers))
+
         self.pb2_mapper: dict = {}
         self.alias_func_mapper: dict = {}
         self.needed_func_mapper: dict = {}
@@ -176,6 +178,18 @@ class Zero:
         if isinstance(func, str):
             func = dynamic_import(func)
         self.server(alias)(func)
+
+    def use(self, interceptor):
+        """
+        Register the global interceptor.
+        """
+        interceptor_pipeline = self.app.server._state.__dict__['interceptor_pipeline']  # noqa
+        if interceptor_pipeline is None:
+            self.app.server._state.__dict__['interceptor_pipeline'] = service_pipeline([interceptor()])  # noqa
+        else:
+            self.app.server._state.__dict__['interceptor_pipeline'] = service_pipeline(  # noqa
+                list(self.app.server._state.__dict__['interceptor_pipeline'].interceptors) + [interceptor()]  # noqa
+            )
 
     def _set_to_alias_func_mapper(self, alias: str, func_name: str, func):
         if alias not in self.app.alias_func_mapper:
