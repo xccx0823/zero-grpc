@@ -1,3 +1,4 @@
+import importlib
 import re
 
 
@@ -9,3 +10,9 @@ def camel_to_snake(name):
 def snake_to_camel(string):
     parts = string.split('_')
     return ''.join(part.capitalize() for part in parts)
+
+
+def dynamic_import(import_string: str):
+    module_name, obj = import_string.split(':')
+    module = importlib.import_module(module_name)
+    return getattr(module, obj)

@@ -7,7 +7,7 @@ from typing import Optional, Union
 import grpc  # noqa
 
 from zero.serve.setting import Setting
-from zero.utils import camel_to_snake, snake_to_camel
+from zero.utils import camel_to_snake, snake_to_camel, dynamic_import
 
 
 class current:  # noqa
@@ -142,7 +142,7 @@ class Zero:
 
         return decorator
 
-    def server(self, alias):
+    def server(self, alias: str):
         """
         Class registration decorator for prototype functions for grpc.
         """
@@ -163,7 +163,13 @@ class Zero:
 
         return decorator
 
-    def _set_to_alias_func_mapper(self, alias, func_name, func):
+    def register_func(self, import_sting: str, *, alias: str, name: Optional[str] = None):
+        self.rpc(alias, name)(dynamic_import(import_sting))
+
+    def register_view(self, import_sting: str, *, alias: str):
+        self.server(alias)(dynamic_import(import_sting))
+
+    def _set_to_alias_func_mapper(self, alias: str, func_name: str, func):
         if alias not in self.app.alias_func_mapper:
             self.app.alias_func_mapper[alias] = {func_name: func}
         else:
