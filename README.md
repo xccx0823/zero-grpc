@@ -1,6 +1,6 @@
 # zero-grpc
 
-zero-grpc是一个方便快捷的使用grpc服务的框架。
+zero-grpc是一个可以方便的使用grpc服务的框架。
 
 ## 安装
 
