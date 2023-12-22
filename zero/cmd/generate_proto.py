@@ -11,6 +11,7 @@ def generate_grpc_code(args):
         print(f"\n\033[91mwarning: you must be set --file, like {example_command}\033[0m")
         return
 
+    # TODO: 需要修改命令
     output = args.out or '.'
     command = [
         "python",
