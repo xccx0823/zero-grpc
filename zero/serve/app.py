@@ -2,7 +2,7 @@ import inspect
 import logging
 import warnings
 from concurrent import futures
-from typing import Optional, Union, Callable
+from typing import Optional, Union
 
 import grpc  # noqa
 from grpc._interceptor import service_pipeline  # noqa
@@ -172,15 +172,11 @@ class Zero:
 
         return decorator
 
-    def register_func(self, func: Union[Callable, str], *, alias: str, name: Optional[str] = None):
-        if isinstance(func, str):
-            func = dynamic_import(func)
-        self.rpc(alias, name)(func)
+    def register_func(self, func: str, *, alias: str, name: Optional[str] = None):
+        self.rpc(alias, name)(dynamic_import(func))
 
-    def register_view(self, func: Union[Callable, str], *, alias: str):
-        if isinstance(func, str):
-            func = dynamic_import(func)
-        self.server(alias)(func)
+    def register_view(self, func: str, *, alias: str):
+        self.server(alias)(dynamic_import(func))
 
     def use(self, interceptor):
         """
