@@ -169,7 +169,7 @@ class Zero:
         else:
             func_mapper = self.app.alias_func_mapper[alias]
             # If you have already registered, the second registration will not take effect and there will be a warning.
-            if func_name in func_mapper and self.debug:
+            if func_name in func_mapper:
                 warn_msg = f'The function `{func_name}` required in proto alias `{alias}` has already been registered.'
                 warnings.warn(warn_msg)
             else:
