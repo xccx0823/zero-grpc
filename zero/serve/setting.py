@@ -6,16 +6,17 @@ class Setting:
     Global Configuration
     """
 
-    # Default configuration variables.
-    # service listening address.
-    ADDRESS: Optional[str] = None
-    # number of threads started by the service.
-    WORKERS: Optional[int] = None
-    # specify a time to listen for shutdown events in the loop.
-    # the parameters required for the 'wait_for_termination' method of the grpc object
-    RUN_TIMEOUT: Optional[int] = None
-    # debug mode.
-    DEBUG: Optional[bool] = None
+    def __init__(self):
+        # Default configuration variables.
+        # service listening address.
+        self.ADDRESS: Optional[str] = None
+        # number of threads started by the service.
+        self.WORKERS: Optional[int] = None
+        # specify a time to listen for shutdown events in the loop.
+        # the parameters required for the 'wait_for_termination' method of the grpc object
+        self.RUN_TIMEOUT: Optional[int] = None
+        # debug mode.
+        self.DEBUG: Optional[bool] = None
 
     def yaml_config(self, path: str):
         """
