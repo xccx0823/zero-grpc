@@ -45,12 +45,6 @@ python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. example.proto
 zero proto2code --file=example.proto
 ```
 
-使用`--out`可以指定代码文件输出的位置，如果不传默认就为当前目录。
-
-```shell
-zero proto2code --file=example.proto --out=/proto
-```
-
 ### 使用zero-grpc创建一个grpc服务
 
 ```python
