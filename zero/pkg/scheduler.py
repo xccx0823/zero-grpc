@@ -17,7 +17,9 @@ from zero.pkg.base import ZeroPkgInitBase
 
 
 def job_to_dict(job):
-    """Converts a job to an OrderedDict."""
+    """
+    Converts a job to an OrderedDict.
+    """
 
     data = OrderedDict()
     data['id'] = job.id
@@ -37,7 +39,9 @@ def job_to_dict(job):
 
 
 def pop_trigger(data):
-    """Pops trigger and trigger args from a given dict."""
+    """
+    Pops trigger and trigger args from a given dict.
+    """
 
     trigger_name = data.pop('trigger')
     trigger_args = {}
@@ -61,7 +65,9 @@ def pop_trigger(data):
 
 
 def trigger_to_dict(trigger):
-    """Converts a trigger to an OrderedDict."""
+    """
+    Converts a trigger to an OrderedDict.
+    """
 
     data = OrderedDict()
 
