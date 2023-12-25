@@ -2,7 +2,7 @@ from zero import Zero
 from zero.pkg.base import ZeroPkgInitBase
 
 
-class ZeroCache(ZeroPkgInitBase):
+class Cache(ZeroPkgInitBase):
 
     def __int__(self):
         pass

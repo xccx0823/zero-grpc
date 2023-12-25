@@ -2,7 +2,7 @@ from zero import Zero
 from zero.pkg.base import ZeroPkgInitBase
 
 
-class ZeroSqlalchemy(ZeroPkgInitBase):
+class Sqlalchemy(ZeroPkgInitBase):
 
     def __int__(self):
         pass
