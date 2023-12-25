@@ -283,7 +283,7 @@ class Apscheduler(ZeroPkgInitBase):
 
     def remove_job(self, jid, jobstore=None):
         """
-        Remove a job, preventing it from being run any more.
+        Delete the job and prevent it from continuing to run.
 
         :param str jid: the identifier of the job
         :param str jobstore: alias of the job store that contains the job
@@ -303,11 +303,6 @@ class Apscheduler(ZeroPkgInitBase):
     def get_job(self, jid, jobstore=None):
         """
         Return the Job that matches the given ``id``.
-
-        :param str jid: the identifier of the job
-        :param str jobstore: alias of the job store that most likely contains the job
-        :return: the Job by the given ID, or ``None`` if it wasn't found
-        :rtype: Job
         """
 
         return self._scheduler.get_job(jid, jobstore)
