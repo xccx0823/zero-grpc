@@ -146,7 +146,7 @@ def extract_timedelta(delta):
 
 class Apscheduler(ZeroPkgInitBase):
 
-    def __int__(self, scheduler=None, app: Optional[Zero] = None):
+    def __init__(self, scheduler=None, app: Optional[Zero] = None):
         self._scheduler = scheduler or BackgroundScheduler()
         self._host_name = socket.gethostname().lower()
         self._authentication_callback = None
