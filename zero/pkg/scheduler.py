@@ -1,4 +1,3 @@
-import logging
 import socket
 import warnings
 from collections import OrderedDict
@@ -143,9 +142,6 @@ def extract_timedelta(delta):
     mm, ss = divmod(delta.seconds, 60)
     hh, mm = divmod(mm, 60)
     return w, d, hh, mm, ss
-
-
-LOGGER = logging.getLogger('flask_apscheduler')
 
 
 class Apscheduler(ZeroPkgInitBase):
