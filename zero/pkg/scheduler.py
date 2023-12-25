@@ -5,7 +5,7 @@ from typing import Optional
 
 import dateutil.parser
 import six
-from apscheduler.events import EVENT_ALL
+from apscheduler.events import EVENT_ALL  # noqa
 from apscheduler.jobstores.base import JobLookupError
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
