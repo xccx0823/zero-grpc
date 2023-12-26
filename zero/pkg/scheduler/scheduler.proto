@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+
 // Scheduler: Apscheduler Task information
 service Scheduler {
     rpc GetSchedulerInfo (EmptyRequest) returns (GetSchInfoResp);
@@ -31,7 +32,6 @@ message JobIdRequest {
 
 // EmptyResponse: Empty response
 message EmptyResp {}
-
 
 // GetSchInfoResp: Gets the scheduler info
 message GetSchInfoResp {
