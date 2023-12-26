@@ -1,10 +1,11 @@
 syntax = "proto3";
 
+import "google/protobuf/any.proto";
 
 // Scheduler: Apscheduler Task information
 service Scheduler {
     rpc GetSchedulerInfo (EmptyRequest) returns (GetSchInfoResp);
-    rpc AddJob (EmptyRequest) returns (EmptyResp);
+    rpc AddJob (AddJobRequest) returns (AddJobResp);
     rpc GetJob (JobIdRequest) returns (EmptyResp);
     rpc GetJobs (EmptyRequest) returns (EmptyResp);
     rpc DeleteJob (JobIdRequest) returns (EmptyResp);
@@ -26,6 +27,13 @@ message JobIdRequest {
     string job_id = 1;
 }
 
+// AddJobRequest: Add parameters for scheduling tasks
+message AddJobRequest {
+    string id = 1;
+    string func = 2;
+    string trigger = 3;
+}
+
 /*
     RESPONSE
 */
@@ -38,4 +46,9 @@ message GetSchInfoResp {
     string current_host = 1;
     string allowed_hosts = 2;
     string running = 3;
+}
+
+// AddJobResp: The return result after successfully adding a task
+message AddJobResp {
+    string id = 1;
 }

@@ -11,6 +11,11 @@ from zero.serve.interceptor import setup_logger_interceptor
 from zero.serve.setting import Setting
 from zero.utils import camel_to_snake, snake_to_camel, dynamic_import
 
+try:
+    from zero.pkg.scheduler.scheduler import Apscheduler
+except (ImportError, ModuleNotFoundError):
+    pass
+
 
 class current:  # noqa
     """
@@ -18,6 +23,21 @@ class current:  # noqa
     """
     app: Optional['GrpcApp'] = None
     setting: Optional['Setting'] = None
+
+    # pkg
+    _apscheduler: Optional['Apscheduler'] = None
+
+    @property
+    def apscheduler(self) -> Optional['Apscheduler']:
+        if self._apscheduler is None:
+            raise ModuleNotFoundError(
+                'You are currently not installing or initializing apscheduler.'
+                ' Try pip install zero grpc [apscheduler] ?')
+        return self._apscheduler
+
+    @apscheduler.setter
+    def apscheduler(self, apscheduler: 'Apscheduler'):
+        self._apscheduler = apscheduler
 
 
 class _PB2:

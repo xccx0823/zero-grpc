@@ -9,6 +9,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from zero import Zero
 from zero.pkg.base import ZeroPkgInitBase
 from zero.pkg.scheduler.utils import fix_job_def, pop_trigger
+from zero.serve.app import current
 
 
 class Apscheduler(ZeroPkgInitBase):
@@ -18,6 +19,7 @@ class Apscheduler(ZeroPkgInitBase):
         self._host_name = socket.gethostname().lower()
         self._authentication_callback = None
         self.app: Optional[Zero] = None
+        self.allowed_hosts = ['*']
 
         if app:
             self.init_app(app)
@@ -59,11 +61,19 @@ class Apscheduler(ZeroPkgInitBase):
 
     def init_app(self, app: Zero):
         self.app = app
-        self.app.apscheduler = self
+        current.apscheduler = self
         self._load_config()
         self._load_jobs()
 
     def start(self, paused=False):
+
+        if self.host_name not in self.allowed_hosts and '*' not in self.allowed_hosts:
+            self.app.log.debug(
+                'Host name %s is not allowed to start the APScheduler. Servers allowed: %s' %
+                (self.host_name, ','.join(self.allowed_hosts))
+            )
+            return
+
         self._scheduler.start(paused=paused)
         if self.app.debug:
             self.app.log.info('* The apscheduler is started')
@@ -252,6 +262,8 @@ class Apscheduler(ZeroPkgInitBase):
             options['timezone'] = timezone
 
         self._scheduler.configure(**options)
+
+        self.allowed_hosts = getattr(self.app.setting, 'SCHEDULER_ALLOWED_HOSTS', self.allowed_hosts)
 
     def _load_jobs(self):
         """
