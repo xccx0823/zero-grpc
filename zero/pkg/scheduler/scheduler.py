@@ -8,6 +8,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from zero import Zero
 from zero.pkg.base import ZeroPkgInitBase
+from zero.pkg.scheduler import scheduler_pb2, scheduler_pb2_grpc
 from zero.pkg.scheduler.utils import fix_job_def, pop_trigger
 from zero.serve.app import current
 
@@ -73,6 +74,7 @@ class Apscheduler(ZeroPkgInitBase):
         """
         Add grpc service for apscheduler
         """
+        self.app.add_pb2(scheduler_pb2, scheduler_pb2_grpc, 'Scheduler')
         self.app.register_view('zero.pkg.scheduler.api:SchedulerServicer', alias='Scheduler')
 
     def start(self, paused=False):
