@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/any.proto";
-
 // Scheduler: Apscheduler Task information
 service Scheduler {
     rpc GetSchedulerInfo (EmptyRequest) returns (GetSchInfoResp);
