@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+service Scheduler {
+    rpc GetSchedulerInfo (Request) returns (Response);
+    rpc AddJob (Request) returns (Response);
+    rpc GetJob (Request) returns (Response);
+    rpc GetJobs (Request) returns (Response);
+    rpc DeleteJob (Request) returns (Response);
+    rpc UpdateJob (Request) returns (Response);
+    rpc PauseJob (Request) returns (Response);
+    rpc ResumeJob (Request) returns (Response);
+    rpc RunJob (Request) returns (Response);
+}
+
+message Request {}
+message Response {}
