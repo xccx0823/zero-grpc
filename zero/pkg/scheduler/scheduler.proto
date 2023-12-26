@@ -22,7 +22,7 @@ message EmptyRequest {}
 
 // JobIdRequest: Single job controls request parameters
 message JobIdRequest {
-    string job_id = 1;
+    string id = 1;
 }
 
 // AddJobRequest: Add parameters for scheduling tasks
