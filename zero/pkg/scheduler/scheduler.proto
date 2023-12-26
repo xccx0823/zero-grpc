@@ -1,16 +1,33 @@
 syntax = "proto3";
 
+// Scheduler Apscheduler任务信息
 service Scheduler {
     rpc GetSchedulerInfo (EmptyRequest) returns (EmptyResponse);
     rpc AddJob (EmptyRequest) returns (EmptyResponse);
-    rpc GetJob (EmptyRequest) returns (EmptyResponse);
+    rpc GetJob (JobIdRequest) returns (EmptyResponse);
     rpc GetJobs (EmptyRequest) returns (EmptyResponse);
-    rpc DeleteJob (EmptyRequest) returns (EmptyResponse);
-    rpc UpdateJob (EmptyRequest) returns (EmptyResponse);
-    rpc PauseJob (EmptyRequest) returns (EmptyResponse);
-    rpc ResumeJob (EmptyRequest) returns (EmptyResponse);
-    rpc RunJob (EmptyRequest) returns (EmptyResponse);
+    rpc DeleteJob (JobIdRequest) returns (EmptyResponse);
+    rpc UpdateJob (JobIdRequest) returns (EmptyResponse);
+    rpc PauseJob (JobIdRequest) returns (EmptyResponse);
+    rpc ResumeJob (JobIdRequest) returns (EmptyResponse);
+    rpc RunJob (JobIdRequest) returns (EmptyResponse);
 }
 
+/*
+    REQUEST
+*/
+
+// EmptyRequest 空请求参数
 message EmptyRequest {}
+
+// JobIdRequest 单个job控制请求参数
+message JobIdRequest {
+    string job_id = 1;
+}
+
+/*
+    RESPONSE
+*/
+
+// EmptyResponse 空返回结果
 message EmptyResponse {}
