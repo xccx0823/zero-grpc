@@ -65,6 +65,8 @@ class Apscheduler(ZeroPkgInitBase):
 
     def start(self, paused=False):
         self._scheduler.start(paused=paused)
+        if self.app.debug:
+            self.app.log.info('* The apscheduler is started')
 
     def shutdown(self, wait=True):
         """
@@ -112,18 +114,18 @@ class Apscheduler(ZeroPkgInitBase):
         """
         self._scheduler.remove_listener(callback)
 
-    def add_job(self, jid, func, **kwargs):
+    def add_job(self, id, func, **kwargs):  # noqa
         """
         Add the given job to the job list and wakes up the scheduler if it's already running.
 
-        :param str jid: explicit identifier for the job (for modifying it later)
+        :param str id: explicit identifier for the job (for modifying it later)
         :param func: callable (or a textual reference to one) to run at the given time
         """
 
         job_def = dict(kwargs)
-        job_def['id'] = jid
+        job_def['id'] = id
         job_def['func'] = func
-        job_def['name'] = job_def.get('name') or jid
+        job_def['name'] = job_def.get('name') or id
 
         fix_job_def(job_def)
 
@@ -142,15 +144,15 @@ class Apscheduler(ZeroPkgInitBase):
 
         self.remove_all_jobs(jobstore)
 
-    def remove_job(self, jid, jobstore=None):
+    def remove_job(self, id, jobstore=None):  # noqa
         """
         Delete the job and prevent it from continuing to run.
 
-        :param str jid: the identifier of the job
+        :param str id: the identifier of the job
         :param str jobstore: alias of the job store that contains the job
         """
 
-        self._scheduler.remove_job(jid, jobstore)
+        self._scheduler.remove_job(id, jobstore)  # noqa
 
     def remove_all_jobs(self, jobstore=None):
         """
@@ -161,12 +163,12 @@ class Apscheduler(ZeroPkgInitBase):
 
         self._scheduler.remove_all_jobs(jobstore)
 
-    def get_job(self, jid, jobstore=None):
+    def get_job(self, id, jobstore=None):  # noqa
         """
         Return the Job that matches the given ``id``.
         """
 
-        return self._scheduler.get_job(jid, jobstore)
+        return self._scheduler.get_job(id, jobstore)  # noqa   # noqa
 
     def get_jobs(self, jobstore=None):
         """
@@ -179,11 +181,11 @@ class Apscheduler(ZeroPkgInitBase):
 
         return self._scheduler.get_jobs(jobstore)
 
-    def modify_job(self, jid, jobstore=None, **changes):
+    def modify_job(self, id, jobstore=None, **changes):  # noqa
         """
         Modify the properties of a single job. Modifications are passed to this method as extra keyword arguments.
 
-        :param str jid: the identifier of the job
+        :param str id: the identifier of the job
         :param str jobstore: alias of the job store that contains the job
         """
 
@@ -191,36 +193,36 @@ class Apscheduler(ZeroPkgInitBase):
 
         if 'trigger' in changes:
             trigger, trigger_args = pop_trigger(changes)
-            self._scheduler.reschedule_job(jid, jobstore, trigger, **trigger_args)
+            self._scheduler.reschedule_job(id, jobstore, trigger, **trigger_args)
 
-        return self._scheduler.modify_job(jid, jobstore, **changes)
+        return self._scheduler.modify_job(id, jobstore, **changes)
 
-    def pause_job(self, jid, jobstore=None):
+    def pause_job(self, id, jobstore=None):  # noqa
         """
         Pause the given job until it is explicitly resumed.
 
-        :param str jid: the identifier of the job
+        :param str id: the identifier of the job
         :param str jobstore: alias of the job store that contains the job
         """
-        self._scheduler.pause_job(jid, jobstore)
+        self._scheduler.pause_job(id, jobstore)  # noqa
 
-    def resume_job(self, jid, jobstore=None):
+    def resume_job(self, id, jobstore=None):  # noqa
         """
         Resume the schedule of the given job, or removes the job if its schedule is finished.
 
-        :param str jid: the identifier of the job
+        :param str id: the identifier of the job
         :param str jobstore: alias of the job store that contains the job
         """
-        self._scheduler.resume_job(jid, jobstore)
+        self._scheduler.resume_job(id, jobstore)  # noqa
 
-    def run_job(self, jid, jobstore=None):
+    def run_job(self, id, jobstore=None):  # noqa
         """
         Run the given job without scheduling it.
-        :param jid: the identifier of the job.
+        :param id: the identifier of the job.
         :param str jobstore: alias of the job store that contains the job
         :return:
         """
-        job = self._scheduler.get_job(jid, jobstore)
+        job = self._scheduler.get_job(id, jobstore)
 
         if not job:
             raise JobLookupError(id)
@@ -233,19 +235,19 @@ class Apscheduler(ZeroPkgInitBase):
         """
         options = dict()
 
-        job_stores = getattr(self.app.setting, 'SCHEDULER_JOBSTORES')
+        job_stores = getattr(self.app.setting, 'SCHEDULER_JOBSTORES', None)
         if job_stores:
             options['jobstores'] = job_stores
 
-        executors = getattr(self.app.setting, 'SCHEDULER_EXECUTORS')
+        executors = getattr(self.app.setting, 'SCHEDULER_EXECUTORS', None)
         if executors:
             options['executors'] = executors
 
-        job_defaults = getattr(self.app.setting, 'SCHEDULER_JOB_DEFAULTS')
+        job_defaults = getattr(self.app.setting, 'SCHEDULER_JOB_DEFAULTS', None)
         if job_defaults:
             options['job_defaults'] = job_defaults
 
-        timezone = getattr(self.app.setting, 'SCHEDULER_TIMEZONE')
+        timezone = getattr(self.app.setting, 'SCHEDULER_TIMEZONE', None)
         if timezone:
             options['timezone'] = timezone
 
@@ -255,10 +257,10 @@ class Apscheduler(ZeroPkgInitBase):
         """
         Load the job definitions from the Zero configuration.
         """
-        jobs = getattr(self.app.setting, 'SCHEDULER_JOBS')
+        jobs = getattr(self.app.setting, 'SCHEDULER_JOBS', None)
 
         if not jobs:
-            jobs = getattr(self.app.setting, 'JOBS')
+            jobs = getattr(self.app.setting, 'JOBS', None)
 
         if jobs:
             for job in jobs:
