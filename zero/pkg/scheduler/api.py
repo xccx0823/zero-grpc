@@ -8,8 +8,7 @@ from zero.serve.app import current
 class SchedulerServicer(View):
 
     def get_scheduler_info(self, request, context):  # noqa
-        from zero.pkg.scheduler.scheduler import Apscheduler
-        scheduler: Apscheduler = current._apscheduler  # noqa
+        scheduler = current._apscheduler  # noqa
         return self.pb2.GetSchInfoResp(
             current_host=scheduler.host_name,
             allowed_hosts=scheduler.allowed_hosts,
