@@ -1,26 +1,26 @@
 syntax = "proto3";
 
-// Scheduler Apscheduler任务信息
+// Scheduler: Apscheduler Task information
 service Scheduler {
-    rpc GetSchedulerInfo (EmptyRequest) returns (EmptyResponse);
-    rpc AddJob (EmptyRequest) returns (EmptyResponse);
-    rpc GetJob (JobIdRequest) returns (EmptyResponse);
-    rpc GetJobs (EmptyRequest) returns (EmptyResponse);
-    rpc DeleteJob (JobIdRequest) returns (EmptyResponse);
-    rpc UpdateJob (JobIdRequest) returns (EmptyResponse);
-    rpc PauseJob (JobIdRequest) returns (EmptyResponse);
-    rpc ResumeJob (JobIdRequest) returns (EmptyResponse);
-    rpc RunJob (JobIdRequest) returns (EmptyResponse);
+    rpc GetSchedulerInfo (EmptyRequest) returns (GetSchInfoResp);
+    rpc AddJob (EmptyRequest) returns (EmptyResp);
+    rpc GetJob (JobIdRequest) returns (EmptyResp);
+    rpc GetJobs (EmptyRequest) returns (EmptyResp);
+    rpc DeleteJob (JobIdRequest) returns (EmptyResp);
+    rpc UpdateJob (JobIdRequest) returns (EmptyResp);
+    rpc PauseJob (JobIdRequest) returns (EmptyResp);
+    rpc ResumeJob (JobIdRequest) returns (EmptyResp);
+    rpc RunJob (JobIdRequest) returns (EmptyResp);
 }
 
 /*
     REQUEST
 */
 
-// EmptyRequest 空请求参数
+// EmptyRequest: Empty request
 message EmptyRequest {}
 
-// JobIdRequest 单个job控制请求参数
+// JobIdRequest: Single job controls request parameters
 message JobIdRequest {
     string job_id = 1;
 }
@@ -29,5 +29,13 @@ message JobIdRequest {
     RESPONSE
 */
 
-// EmptyResponse 空返回结果
-message EmptyResponse {}
+// EmptyResponse: Empty response
+message EmptyResp {}
+
+
+// GetSchInfoResp: Gets the scheduler info
+message GetSchInfoResp {
+    string current_host = 1;
+    string allowed_hosts = 2;
+    string running = 3;
+}
