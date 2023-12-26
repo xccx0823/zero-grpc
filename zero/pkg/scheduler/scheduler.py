@@ -19,6 +19,7 @@ class Apscheduler(ZeroPkgInitBase):
         self._host_name = socket.gethostname().lower()
         self._authentication_callback = None
         self.app: Optional[Zero] = None
+        self.api_enabled = False
         self.allowed_hosts = ['*']
 
         if app:
@@ -64,6 +65,15 @@ class Apscheduler(ZeroPkgInitBase):
         current.apscheduler = self
         self._load_config()
         self._load_jobs()
+
+        if self.api_enabled:
+            self._load_api()
+
+    def _load_api(self):
+        """
+        Add grpc service for apscheduler
+        """
+        self.app.register_view('zero.pkg.scheduler.api:SchedulerServicer', alias='Scheduler')
 
     def start(self, paused=False):
 
@@ -264,6 +274,7 @@ class Apscheduler(ZeroPkgInitBase):
         self._scheduler.configure(**options)
 
         self.allowed_hosts = getattr(self.app.setting, 'SCHEDULER_ALLOWED_HOSTS', self.allowed_hosts)
+        self.api_enabled = getattr(self.app.setting, 'SCHEDULER_API_ENABLED', self.api_enabled)
 
     def _load_jobs(self):
         """
