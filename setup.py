@@ -28,5 +28,17 @@ setup(
         'console_scripts': [
             'zero = zero.cmd.cli:main'
         ]
+    },
+    install_requires=[
+        'grpcio>=1.60.0',
+        'grpcio-tools>=1.60.0',
+        'protobuf>=4.24.4'
+    ],
+    extras_require={
+        'apscheduler': [
+            'apscheduler>=3.10.4',
+            'six',
+            'python-dateutil'
+        ]
     }
 )
