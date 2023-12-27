@@ -28,7 +28,7 @@ class SchedulerStub(object):
         self.GetJob = channel.unary_unary(
                 '/Scheduler/GetJob',
                 request_serializer=scheduler__pb2.JobIdRequest.SerializeToString,
-                response_deserializer=scheduler__pb2.EmptyResp.FromString,
+                response_deserializer=scheduler__pb2.GetJobResp.FromString,
                 )
         self.GetJobs = channel.unary_unary(
                 '/Scheduler/GetJobs',
@@ -136,7 +136,7 @@ def add_SchedulerServicer_to_server(servicer, server):
             'GetJob': grpc.unary_unary_rpc_method_handler(
                     servicer.GetJob,
                     request_deserializer=scheduler__pb2.JobIdRequest.FromString,
-                    response_serializer=scheduler__pb2.EmptyResp.SerializeToString,
+                    response_serializer=scheduler__pb2.GetJobResp.SerializeToString,
             ),
             'GetJobs': grpc.unary_unary_rpc_method_handler(
                     servicer.GetJobs,
@@ -226,7 +226,7 @@ class Scheduler(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Scheduler/GetJob',
             scheduler__pb2.JobIdRequest.SerializeToString,
-            scheduler__pb2.EmptyResp.FromString,
+            scheduler__pb2.GetJobResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

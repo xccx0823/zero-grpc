@@ -4,7 +4,7 @@ syntax = "proto3";
 service Scheduler {
     rpc GetSchedulerInfo (EmptyRequest) returns (GetSchInfoResp);
     rpc AddJob (AddJobRequest) returns (AddJobResp);
-    rpc GetJob (JobIdRequest) returns (EmptyResp);
+    rpc GetJob (JobIdRequest) returns (GetJobResp);
     rpc GetJobs (EmptyRequest) returns (EmptyResp);
     rpc DeleteJob (JobIdRequest) returns (EmptyResp);
     rpc UpdateJob (JobIdRequest) returns (EmptyResp);
@@ -47,4 +47,9 @@ message GetSchInfoResp {
 // AddJobResp: The return result after successfully adding a task
 message AddJobResp {
     string id = 1;
+}
+
+// GetJobResp: Returns information that the junction is the specified job
+message GetJobResp {
+    string json = 1;
 }

@@ -1,10 +1,19 @@
 import json
+from datetime import datetime
 
 import grpc  # noqa
 from apscheduler.jobstores.base import ConflictingIdError, JobLookupError
 
 from zero import View
+from zero.pkg.scheduler.utils import job_to_dict
 from zero.serve.app import current
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super(JSONEncoder, self).default(obj)
 
 
 class SchedulerServicer(View):
@@ -37,7 +46,17 @@ class SchedulerServicer(View):
             return self.pb2.AddJobResp()
 
     def get_job(self, request, context):
-        pass
+        job_id = request.id
+        job = current.apscheduler.get_job(job_id)
+
+        if not job:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details(f'Job {job_id} not found.')
+            return self.pb2.GetJobResp()
+
+        job_to_dict(job)
+
+        return self.pb2.GetJobResp(json=json.dumps(job_to_dict(job), cls=JSONEncoder))
 
     def get_jobs(self, request, context):
         pass
