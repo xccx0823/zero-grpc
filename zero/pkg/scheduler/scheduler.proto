@@ -27,9 +27,7 @@ message JobIdRequest {
 
 // AddJobRequest: Add parameters for scheduling tasks
 message AddJobRequest {
-    string id = 1;
-    string func = 2;
-    string trigger = 3;
+    string json = 1;
 }
 
 /*

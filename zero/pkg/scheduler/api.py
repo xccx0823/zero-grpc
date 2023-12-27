@@ -1,3 +1,5 @@
+import json
+
 import grpc  # noqa
 from apscheduler.jobstores.base import ConflictingIdError, JobLookupError
 
@@ -16,15 +18,19 @@ class SchedulerServicer(View):
         return resp
 
     def add_job(self, request, context):
-        data = {'id': request.id, 'func': request.func, 'trigger': request.trigger}
-
         try:
-            current.apscheduler.add_job(**data)  # noqa
-            return self.pb2.AddJobResp()
-        except ConflictingIdError:
-            context.set_code(grpc.StatusCode.ALREADY_EXISTS)
-            context.set_details('Job %s already exists.' % data.get('id'))
-            return self.pb2.AddJobResp()
+            data: dict = json.loads(request.json)
+            try:
+                if not isinstance(data, dict):
+                    context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                    context.set_details('The request parameter format is incorrect.')
+                    return self.pb2.AddJobResp()
+                current.apscheduler.add_job(**data)  # noqa
+                return self.pb2.AddJobResp()
+            except ConflictingIdError:
+                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+                context.set_details('Job %s already exists.' % data.get('id'))
+                return self.pb2.AddJobResp()
         except Exception as e:
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(str(e))
