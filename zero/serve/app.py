@@ -25,19 +25,7 @@ class current:  # noqa
     setting: Optional['Setting'] = None
 
     # pkg
-    _apscheduler: Optional['Apscheduler'] = None
-
-    @property
-    def apscheduler(self) -> Optional['Apscheduler']:
-        if self._apscheduler is None:
-            raise ModuleNotFoundError(
-                'You are currently not installing or initializing apscheduler.'
-                ' Try pip install zero grpc [apscheduler] ?')
-        return self._apscheduler
-
-    @apscheduler.setter
-    def apscheduler(self, apscheduler: 'Apscheduler'):
-        self._apscheduler = apscheduler
+    apscheduler: Optional['Apscheduler'] = None
 
 
 class _PB2:

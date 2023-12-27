@@ -42,8 +42,8 @@ message EmptyResp {}
 // GetSchInfoResp: Gets the scheduler info
 message GetSchInfoResp {
     string current_host = 1;
-    string allowed_hosts = 2;
-    string running = 3;
+    repeated string allowed_hosts = 2;
+    bool running = 3;
 }
 
 // AddJobResp: The return result after successfully adding a task

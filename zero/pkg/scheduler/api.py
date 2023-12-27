@@ -8,17 +8,18 @@ from zero.serve.app import current
 class SchedulerServicer(View):
 
     def get_scheduler_info(self, request, context):  # noqa
-        scheduler = current._apscheduler  # noqa
-        return self.pb2.GetSchInfoResp(
+        scheduler = current.apscheduler  # noqa
+        resp = self.pb2.GetSchInfoResp(
             current_host=scheduler.host_name,
             allowed_hosts=scheduler.allowed_hosts,
             running=scheduler.running)
+        return resp
 
     def add_job(self, request, context):
         data = {'id': request.id, 'func': request.func, 'trigger': request.trigger}
 
         try:
-            current._apscheduler.add_job(**data)  # noqa
+            current.apscheduler.add_job(**data)  # noqa
             return self.pb2.AddJobResp()
         except ConflictingIdError:
             context.set_code(grpc.StatusCode.ALREADY_EXISTS)
@@ -39,7 +40,7 @@ class SchedulerServicer(View):
         job_id = request.id
 
         try:
-            current._apscheduler.remove_job(job_id)  # noqa
+            current.apscheduler.remove_job(job_id)  # noqa
             return self.pb2.EmptyResp()
         except JobLookupError:
             context.set_code(grpc.StatusCode.NOT_FOUND)
