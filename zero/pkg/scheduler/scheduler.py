@@ -74,8 +74,8 @@ class Apscheduler(ZeroPkgInitBase):
         """
         Add grpc service for apscheduler
         """
-        self.app.add_pb2(scheduler_pb2, scheduler_pb2_grpc, 'Scheduler')
-        self.app.register_view('zero.pkg.scheduler.api:SchedulerServicer', alias='Scheduler')
+        self.app.add_service(scheduler_pb2, scheduler_pb2_grpc)
+        self.app.register_view('zero.pkg.scheduler.api:SchedulerServicer', 'Scheduler')
 
     def start(self, paused=False):
 

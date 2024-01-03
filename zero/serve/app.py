@@ -202,8 +202,8 @@ class Zero:
     def register_func(self, func: str, *, name: Optional[str] = None):
         self.rpc(name)(dynamic_import(func))
 
-    def register_view(self, func: str, *, alias: str):
-        self.server(alias)(dynamic_import(func))
+    def register_view(self, func: str, name: str):
+        self.server(name)(dynamic_import(func))
 
     def use(self, interceptor):
         """
@@ -235,12 +235,12 @@ class Zero:
         """
         if not self.app.service_func_mapper:
             return
-        for alias, funcs in self.app.service_func_mapper.items():
-            service = self.app.service_mapper.get(alias)
+        for service_name, funcs in self.app.service_func_mapper.items():
+            service = self.app.service_mapper.get(service_name)
             if not service:
                 warnings.warn(f'Current service {service} not added.')
                 continue
-            instance = type(alias, (service.servicer, service.tool_cls()), funcs)
+            instance = type(service_name, (service.servicer, service.tool_cls()), funcs)
             service.add_to_server(instance(), self.app.server)
 
     def _output_start_message(self):
@@ -253,13 +253,14 @@ class Zero:
             self.log.debug(f"* Serving Zero grpc app '{self.import_name}'")
             self.log.debug(f"* Listening on grpc://{self.address}")
             self.log.debug(f"* The number of workers is {self.workers}\n")
-            for service_name, functions in self.app.service_func_mapper.items():
-                self.log.debug(f"* Service: {service_name}")
-                for function in self.app.needed_func_mapper[service_name]:
-                    if function in functions.keys():
-                        self.log.debug(f"* -----------> {function} " + "\033[92m√\033[0m")
+            for service_name, functions in self.app.needed_func_mapper.items():
+                self.log.debug(f"* : {service_name}")
+                for function in functions:
+                    if self.app.service_func_mapper.get(service_name, {}).get(function):
+                        self.log.debug(f"* \033[92m - /{service_name}/{function} √\033[0m")
                     else:
-                        self.log.debug(f"* -----------> {function} " + "\033[93m×\033[0m")
+                        self.log.debug(f"* \033[93m - /{service_name}/{function} ×\033[0m")
+
             self.log.debug('\n\033[93mPress CTRL+C to quit\033[0m\n')
 
     def set_logger_interceptor(self):
