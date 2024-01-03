@@ -22,18 +22,18 @@ class SchedulerStub(object):
                 )
         self.AddJob = channel.unary_unary(
                 '/Scheduler/AddJob',
-                request_serializer=scheduler__pb2.AddJobRequest.SerializeToString,
-                response_deserializer=scheduler__pb2.AddJobResp.FromString,
+                request_serializer=scheduler__pb2.JobInfoRequest.SerializeToString,
+                response_deserializer=scheduler__pb2.JobIdResp.FromString,
                 )
         self.GetJob = channel.unary_unary(
                 '/Scheduler/GetJob',
                 request_serializer=scheduler__pb2.JobIdRequest.SerializeToString,
-                response_deserializer=scheduler__pb2.GetJobResp.FromString,
+                response_deserializer=scheduler__pb2.JobInfoResp.FromString,
                 )
         self.GetJobs = channel.unary_unary(
                 '/Scheduler/GetJobs',
                 request_serializer=scheduler__pb2.EmptyRequest.SerializeToString,
-                response_deserializer=scheduler__pb2.EmptyResp.FromString,
+                response_deserializer=scheduler__pb2.JobInfosResp.FromString,
                 )
         self.DeleteJob = channel.unary_unary(
                 '/Scheduler/DeleteJob',
@@ -42,23 +42,23 @@ class SchedulerStub(object):
                 )
         self.UpdateJob = channel.unary_unary(
                 '/Scheduler/UpdateJob',
-                request_serializer=scheduler__pb2.JobIdRequest.SerializeToString,
-                response_deserializer=scheduler__pb2.EmptyResp.FromString,
+                request_serializer=scheduler__pb2.DetailJobInfoRequest.SerializeToString,
+                response_deserializer=scheduler__pb2.JobInfoResp.FromString,
                 )
         self.PauseJob = channel.unary_unary(
                 '/Scheduler/PauseJob',
                 request_serializer=scheduler__pb2.JobIdRequest.SerializeToString,
-                response_deserializer=scheduler__pb2.EmptyResp.FromString,
+                response_deserializer=scheduler__pb2.JobInfoResp.FromString,
                 )
         self.ResumeJob = channel.unary_unary(
                 '/Scheduler/ResumeJob',
                 request_serializer=scheduler__pb2.JobIdRequest.SerializeToString,
-                response_deserializer=scheduler__pb2.EmptyResp.FromString,
+                response_deserializer=scheduler__pb2.JobInfoResp.FromString,
                 )
         self.RunJob = channel.unary_unary(
                 '/Scheduler/RunJob',
                 request_serializer=scheduler__pb2.JobIdRequest.SerializeToString,
-                response_deserializer=scheduler__pb2.EmptyResp.FromString,
+                response_deserializer=scheduler__pb2.JobInfoResp.FromString,
                 )
 
 
@@ -130,18 +130,18 @@ def add_SchedulerServicer_to_server(servicer, server):
             ),
             'AddJob': grpc.unary_unary_rpc_method_handler(
                     servicer.AddJob,
-                    request_deserializer=scheduler__pb2.AddJobRequest.FromString,
-                    response_serializer=scheduler__pb2.AddJobResp.SerializeToString,
+                    request_deserializer=scheduler__pb2.JobInfoRequest.FromString,
+                    response_serializer=scheduler__pb2.JobIdResp.SerializeToString,
             ),
             'GetJob': grpc.unary_unary_rpc_method_handler(
                     servicer.GetJob,
                     request_deserializer=scheduler__pb2.JobIdRequest.FromString,
-                    response_serializer=scheduler__pb2.GetJobResp.SerializeToString,
+                    response_serializer=scheduler__pb2.JobInfoResp.SerializeToString,
             ),
             'GetJobs': grpc.unary_unary_rpc_method_handler(
                     servicer.GetJobs,
                     request_deserializer=scheduler__pb2.EmptyRequest.FromString,
-                    response_serializer=scheduler__pb2.EmptyResp.SerializeToString,
+                    response_serializer=scheduler__pb2.JobInfosResp.SerializeToString,
             ),
             'DeleteJob': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteJob,
@@ -150,23 +150,23 @@ def add_SchedulerServicer_to_server(servicer, server):
             ),
             'UpdateJob': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdateJob,
-                    request_deserializer=scheduler__pb2.JobIdRequest.FromString,
-                    response_serializer=scheduler__pb2.EmptyResp.SerializeToString,
+                    request_deserializer=scheduler__pb2.DetailJobInfoRequest.FromString,
+                    response_serializer=scheduler__pb2.JobInfoResp.SerializeToString,
             ),
             'PauseJob': grpc.unary_unary_rpc_method_handler(
                     servicer.PauseJob,
                     request_deserializer=scheduler__pb2.JobIdRequest.FromString,
-                    response_serializer=scheduler__pb2.EmptyResp.SerializeToString,
+                    response_serializer=scheduler__pb2.JobInfoResp.SerializeToString,
             ),
             'ResumeJob': grpc.unary_unary_rpc_method_handler(
                     servicer.ResumeJob,
                     request_deserializer=scheduler__pb2.JobIdRequest.FromString,
-                    response_serializer=scheduler__pb2.EmptyResp.SerializeToString,
+                    response_serializer=scheduler__pb2.JobInfoResp.SerializeToString,
             ),
             'RunJob': grpc.unary_unary_rpc_method_handler(
                     servicer.RunJob,
                     request_deserializer=scheduler__pb2.JobIdRequest.FromString,
-                    response_serializer=scheduler__pb2.EmptyResp.SerializeToString,
+                    response_serializer=scheduler__pb2.JobInfoResp.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -208,8 +208,8 @@ class Scheduler(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Scheduler/AddJob',
-            scheduler__pb2.AddJobRequest.SerializeToString,
-            scheduler__pb2.AddJobResp.FromString,
+            scheduler__pb2.JobInfoRequest.SerializeToString,
+            scheduler__pb2.JobIdResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -226,7 +226,7 @@ class Scheduler(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Scheduler/GetJob',
             scheduler__pb2.JobIdRequest.SerializeToString,
-            scheduler__pb2.GetJobResp.FromString,
+            scheduler__pb2.JobInfoResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -243,7 +243,7 @@ class Scheduler(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Scheduler/GetJobs',
             scheduler__pb2.EmptyRequest.SerializeToString,
-            scheduler__pb2.EmptyResp.FromString,
+            scheduler__pb2.JobInfosResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -276,8 +276,8 @@ class Scheduler(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Scheduler/UpdateJob',
-            scheduler__pb2.JobIdRequest.SerializeToString,
-            scheduler__pb2.EmptyResp.FromString,
+            scheduler__pb2.DetailJobInfoRequest.SerializeToString,
+            scheduler__pb2.JobInfoResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -294,7 +294,7 @@ class Scheduler(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Scheduler/PauseJob',
             scheduler__pb2.JobIdRequest.SerializeToString,
-            scheduler__pb2.EmptyResp.FromString,
+            scheduler__pb2.JobInfoResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -311,7 +311,7 @@ class Scheduler(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Scheduler/ResumeJob',
             scheduler__pb2.JobIdRequest.SerializeToString,
-            scheduler__pb2.EmptyResp.FromString,
+            scheduler__pb2.JobInfoResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -328,6 +328,6 @@ class Scheduler(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Scheduler/RunJob',
             scheduler__pb2.JobIdRequest.SerializeToString,
-            scheduler__pb2.EmptyResp.FromString,
+            scheduler__pb2.JobInfoResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
