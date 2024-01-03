@@ -3,7 +3,7 @@ syntax = "proto3";
 // Scheduler: Apscheduler Task information
 service Scheduler {
     rpc GetSchedulerInfo (EmptyRequest) returns (GetSchInfoResp);
-    rpc AddJob (JobInfoRequest) returns (JobIdResp);
+    rpc AddJob (JobInfoRequest) returns (JobInfoResp);
     rpc GetJob (JobIdRequest) returns (JobInfoResp);
     rpc GetJobs (EmptyRequest) returns (JobInfosResp);
     rpc DeleteJob (JobIdRequest) returns (EmptyResp);
@@ -48,11 +48,6 @@ message GetSchInfoResp {
     string current_host = 1;
     repeated string allowed_hosts = 2;
     bool running = 3;
-}
-
-// AddJobResp: Returns the ID of a single job.
-message JobIdResp {
-    string id = 1;
 }
 
 // JobInfoResp: Return information about a single job.

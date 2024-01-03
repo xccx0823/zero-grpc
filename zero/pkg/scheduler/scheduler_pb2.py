@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fscheduler.proto\"\x0e\n\x0c\x45mptyRequest\"\x1a\n\x0cJobIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"\x1e\n\x0eJobInfoRequest\x12\x0c\n\x04json\x18\x01 \x01(\t\"0\n\x14\x44\x65tailJobInfoRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04json\x18\x02 \x01(\t\"\x0b\n\tEmptyResp\"N\n\x0eGetSchInfoResp\x12\x14\n\x0c\x63urrent_host\x18\x01 \x01(\t\x12\x15\n\rallowed_hosts\x18\x02 \x03(\t\x12\x0f\n\x07running\x18\x03 \x01(\x08\"\x17\n\tJobIdResp\x12\n\n\x02id\x18\x01 \x01(\t\"\x1a\n\x0bJobInfoResp\x12\x0b\n\x03job\x18\x01 \x01(\t\"*\n\x0cJobInfosResp\x12\x1a\n\x04jobs\x18\x01 \x03(\x0b\x32\x0c.JobInfoResp2\x8a\x03\n\tScheduler\x12\x32\n\x10GetSchedulerInfo\x12\r.EmptyRequest\x1a\x0f.GetSchInfoResp\x12%\n\x06\x41\x64\x64Job\x12\x0f.JobInfoRequest\x1a\n.JobIdResp\x12%\n\x06GetJob\x12\r.JobIdRequest\x1a\x0c.JobInfoResp\x12\'\n\x07GetJobs\x12\r.EmptyRequest\x1a\r.JobInfosResp\x12&\n\tDeleteJob\x12\r.JobIdRequest\x1a\n.EmptyResp\x12\x30\n\tUpdateJob\x12\x15.DetailJobInfoRequest\x1a\x0c.JobInfoResp\x12\'\n\x08PauseJob\x12\r.JobIdRequest\x1a\x0c.JobInfoResp\x12(\n\tResumeJob\x12\r.JobIdRequest\x1a\x0c.JobInfoResp\x12%\n\x06RunJob\x12\r.JobIdRequest\x1a\x0c.JobInfoRespb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fscheduler.proto\"\x0e\n\x0c\x45mptyRequest\"\x1a\n\x0cJobIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"\x1e\n\x0eJobInfoRequest\x12\x0c\n\x04json\x18\x01 \x01(\t\"0\n\x14\x44\x65tailJobInfoRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04json\x18\x02 \x01(\t\"\x0b\n\tEmptyResp\"N\n\x0eGetSchInfoResp\x12\x14\n\x0c\x63urrent_host\x18\x01 \x01(\t\x12\x15\n\rallowed_hosts\x18\x02 \x03(\t\x12\x0f\n\x07running\x18\x03 \x01(\x08\"\x1a\n\x0bJobInfoResp\x12\x0b\n\x03job\x18\x01 \x01(\t\"*\n\x0cJobInfosResp\x12\x1a\n\x04jobs\x18\x01 \x03(\x0b\x32\x0c.JobInfoResp2\x8c\x03\n\tScheduler\x12\x32\n\x10GetSchedulerInfo\x12\r.EmptyRequest\x1a\x0f.GetSchInfoResp\x12\'\n\x06\x41\x64\x64Job\x12\x0f.JobInfoRequest\x1a\x0c.JobInfoResp\x12%\n\x06GetJob\x12\r.JobIdRequest\x1a\x0c.JobInfoResp\x12\'\n\x07GetJobs\x12\r.EmptyRequest\x1a\r.JobInfosResp\x12&\n\tDeleteJob\x12\r.JobIdRequest\x1a\n.EmptyResp\x12\x30\n\tUpdateJob\x12\x15.DetailJobInfoRequest\x1a\x0c.JobInfoResp\x12\'\n\x08PauseJob\x12\r.JobIdRequest\x1a\x0c.JobInfoResp\x12(\n\tResumeJob\x12\r.JobIdRequest\x1a\x0c.JobInfoResp\x12%\n\x06RunJob\x12\r.JobIdRequest\x1a\x0c.JobInfoRespb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,12 +33,10 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['_EMPTYRESP']._serialized_end=156
   _globals['_GETSCHINFORESP']._serialized_start=158
   _globals['_GETSCHINFORESP']._serialized_end=236
-  _globals['_JOBIDRESP']._serialized_start=238
-  _globals['_JOBIDRESP']._serialized_end=261
-  _globals['_JOBINFORESP']._serialized_start=263
-  _globals['_JOBINFORESP']._serialized_end=289
-  _globals['_JOBINFOSRESP']._serialized_start=291
-  _globals['_JOBINFOSRESP']._serialized_end=333
-  _globals['_SCHEDULER']._serialized_start=336
-  _globals['_SCHEDULER']._serialized_end=730
+  _globals['_JOBINFORESP']._serialized_start=238
+  _globals['_JOBINFORESP']._serialized_end=264
+  _globals['_JOBINFOSRESP']._serialized_start=266
+  _globals['_JOBINFOSRESP']._serialized_end=308
+  _globals['_SCHEDULER']._serialized_start=311
+  _globals['_SCHEDULER']._serialized_end=707
 # @@protoc_insertion_point(module_scope)

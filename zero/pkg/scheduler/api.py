@@ -39,17 +39,17 @@ class SchedulerServicer(View):
                 if not isinstance(data, dict):
                     context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                     context.set_details('The request parameter format is incorrect.')
-                    return self.pb2.AddJobResp()
-                current.apscheduler.add_job(**data)  # noqa
-                return self.pb2.JobIdResp()
+                    return self.pb2.JobInfoResp()
+                job = current.apscheduler.add_job(**data)  # noqa
+                return  self.pb2.JobInfoResp(job=json.dumps(job_to_dict(job), cls=JSONEncoder))
             except ConflictingIdError:
                 context.set_code(grpc.StatusCode.ALREADY_EXISTS)
                 context.set_details('Job %s already exists.' % data.get('id'))
-                return self.pb2.JobIdResp()
+                return self.pb2.JobInfoResp()
         except Exception as e:
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(str(e))
-            return self.pb2.JobIdResp()
+            return self.pb2.JobInfoResp()
 
     def get_job(self, request, context):
         """
@@ -106,7 +106,7 @@ class SchedulerServicer(View):
                 if not isinstance(data, dict):
                     context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                     context.set_details('The request parameter format is incorrect.')
-                    return self.pb2.AddJobResp()
+                    return self.pb2.JobInfoResp()
                 current.apscheduler.modify_job(job_id, **data)
                 job = current.apscheduler.get_job(job_id)
                 return self.pb2.JobInfoResp(job=json.dumps(job_to_dict(job), cls=JSONEncoder))
