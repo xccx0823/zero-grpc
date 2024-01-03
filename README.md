@@ -54,10 +54,10 @@ import example_pb2_grpc
 from zero import Zero
 
 app = Zero(__name__)
-app.add_pb2(example_pb2, example_pb2_grpc, alias='Example')
+app.add_service(example_pb2, example_pb2_grpc)
 
 
-@app.rpc(alias='Example', name='GrpcExample')
+@app.rpc(name='/Example/GrpcExample')
 def index(self, request, context):
     return self.pb2.Response(message='hello zero-grpc')
 

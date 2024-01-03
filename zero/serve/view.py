@@ -1,4 +1,4 @@
-from typing import Any
+from zero.serve.app import Service
 
 
 class View:
@@ -7,4 +7,4 @@ class View:
     inheriting this property when using the editor. If you can
     tolerate it, you can also choose not to inherit this type.
     """
-    pb2: Any
+    service: Service
