@@ -7,4 +7,4 @@ class View:
     inheriting this property when using the editor. If you can
     tolerate it, you can also choose not to inherit this type.
     """
-    service: Service
+    srv: Service

@@ -59,7 +59,7 @@ app.add_service(example_pb2, example_pb2_grpc)
 
 @app.rpc(name='/Example/GrpcExample')
 def index(self, request, context):
-    return self.pb2.Response(message='hello zero-grpc')
+    return self.srv.Response(message='hello zero-grpc')
 
 
 if __name__ == '__main__':
