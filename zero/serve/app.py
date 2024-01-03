@@ -152,7 +152,11 @@ class Zero:
         """
         Function registration decorator for grpc's proto function.
         """
-        _, service_name, rpc_name = name.split('/')
+        if '/' in name:
+            _, service_name, rpc_name = name.split('/')
+        else:
+            service_name = name
+            rpc_name = None
 
         def decorator(f):
             if service_name not in self.app.needed_func_mapper:
