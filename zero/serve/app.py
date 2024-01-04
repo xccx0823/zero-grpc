@@ -52,8 +52,8 @@ class Service:
 
         self.funcs = dict(inspect.getmembers(self.servicer, predicate=inspect.isfunction)).keys()
 
-    def tool_cls(self):
-        return type('Service', (object,), {'srv': self.pb2})
+    def srv_cls(self):
+        return type('Service', (object,), {'srv': self})
 
 
 class GrpcApp:
@@ -87,7 +87,7 @@ class Zero:
             self,
             import_name,
             *,
-            address: str = 'localhost:8080',
+            address: str = 'localhost:33013',
             workers: int = 10,
             run_timeout: Optional[int] = None,
             debug: bool = True,
@@ -240,7 +240,7 @@ class Zero:
             if not service:
                 warnings.warn(f'Current service {service} not added.')
                 continue
-            instance = type(service_name, (service.servicer, service.tool_cls()), funcs)
+            instance = type(service_name, (service.servicer, service.srv_cls()), funcs)
             service.add_to_server(instance(), self.app.server)
 
     def _output_start_message(self):
@@ -269,3 +269,14 @@ class Zero:
         """
         logger_interceptor = setup_logger_interceptor(self)
         self.use(logger_interceptor)
+
+
+def resp(respname: str):
+    def wrapper(func):
+        def inner(self, request, context):
+            response = getattr(self.srv.pb2, respname)
+            return func(self, request, context, response)
+
+        return inner
+
+    return wrapper
