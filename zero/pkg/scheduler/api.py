@@ -64,9 +64,7 @@ class SchedulerServicer:
             context.set_details(f'Job {job_id} not found.')
             return response()
 
-        job_to_dict(job)
-
-        return response(job=json.dumps(job, cls=JSONEncoder))
+        return response(job=json.dumps(job_to_dict(job), cls=JSONEncoder))
 
     @resp('JobInfosResp')
     def get_jobs(self, request, context, response):
