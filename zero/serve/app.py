@@ -124,7 +124,10 @@ class Zero:
         self.app.server.add_insecure_port(self.address)
         self.app.server.start()
         self._output_start_message()
-        self.app.server.wait_for_termination(self.run_timeout)
+        try:
+            self.app.server.wait_for_termination(self.run_timeout)
+        except KeyboardInterrupt:
+            pass
 
     def add_service(self, pb2, pb2_grpc):
         """
