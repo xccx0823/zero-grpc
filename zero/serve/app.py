@@ -52,9 +52,6 @@ class Service:
 
         self.funcs = dict(inspect.getmembers(self.servicer, predicate=inspect.isfunction)).keys()
 
-    def srv_cls(self):
-        return type('Service', (object,), {'srv': self})
-
 
 class GrpcApp:
 
@@ -243,7 +240,8 @@ class Zero:
             if not service:
                 warnings.warn(f'Current service {service} not added.')
                 continue
-            instance = type(service_name, (service.srv_cls(),), funcs)
+            srv_cls = type('Service', (object,), {'srv': service})
+            instance = type(service_name, (srv_cls,), funcs)
             service.add_to_server(instance(), self.app.server)
 
     def _output_start_message(self):
