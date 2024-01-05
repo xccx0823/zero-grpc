@@ -243,7 +243,7 @@ class Zero:
             if not service:
                 warnings.warn(f'Current service {service} not added.')
                 continue
-            instance = type(service_name, (service.servicer, service.srv_cls()), funcs)
+            instance = type(service_name, (service.srv_cls(),), funcs)
             service.add_to_server(instance(), self.app.server)
 
     def _output_start_message(self):
