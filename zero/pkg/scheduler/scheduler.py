@@ -7,13 +7,12 @@ from apscheduler.jobstores.base import JobLookupError
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from zero import Zero
-from zero.pkg.base import ZeroPkgInitBase
 from zero.pkg.scheduler import scheduler_pb2, scheduler_pb2_grpc
 from zero.pkg.scheduler.utils import fix_job_def, pop_trigger
 from zero.serve.app import current
 
 
-class Apscheduler(ZeroPkgInitBase):
+class Apscheduler:
 
     def __init__(self, app: Optional[Zero] = None, scheduler=None):
         self._scheduler = scheduler or BackgroundScheduler()
