@@ -34,9 +34,6 @@ class Service:
         self.pb2 = pb2
         self.pb2_grpc = pb2_grpc
         self.servicer_name = servicer_name
-        self.add_to_server = None
-        self.stub = None
-        self.servicer = None
 
         self.stub = getattr(self.pb2_grpc, f'{self.servicer_name}Stub', None)
         assert_msg = "The pb2_grpc structure is abnormal. The *Stub class cannot be found."
